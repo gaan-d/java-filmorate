@@ -56,10 +56,10 @@ public class FilmController {
             } else {
                 throw new NotFoundException("Фильм с ID: " + film.getId() + "не найден");
             }
-        } catch (ConditionsNotMetException e){
+        } catch (ConditionsNotMetException e) {
             log.error("Ошибка при обновлении фильма {}", e.getMessage());
             throw e;
-        } catch (NotFoundException e){
+        } catch (NotFoundException e) {
             log.error("Ошибка {}", e.getMessage());
             throw e;
         }
