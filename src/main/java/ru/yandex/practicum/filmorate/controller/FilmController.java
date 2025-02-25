@@ -28,7 +28,6 @@ public class FilmController extends BaseController<Film> {
         return super.update(film);
     }
 
-    // 🔍 Валидация даты релиза
     private void validateReleaseDate(Film film) {
         if (film.getReleaseDate().isBefore(RELEASE_DATE_CHECK)) {
             String error = "Дата релиза не должна быть ранее 28.12.1895";
