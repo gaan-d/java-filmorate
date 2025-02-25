@@ -36,7 +36,7 @@ public class UserControllerTest {
         controller.create(user);
         System.out.println(user);
 
-        assertEquals(1, controller.getUsers().size());
+        assertEquals(1, controller.getAll().size());
     }
 
     @Test
@@ -105,14 +105,14 @@ public class UserControllerTest {
                 .build());
 
         controller.update(User.builder()
-                .id(1)
+                .id(1L)
                 .login("login2")
                 .name("name2")
                 .email("mail2@mail.ru")
                 .birthday(LocalDate.of(2003, 6, 8))
                 .build());
 
-        assertEquals(1, controller.getUsers().size());
+        assertEquals(1, controller.getAll().size());
     }
 
     @Test

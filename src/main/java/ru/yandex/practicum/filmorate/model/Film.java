@@ -1,19 +1,17 @@
 package ru.yandex.practicum.filmorate.model;
 
 import jakarta.validation.constraints.*;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
 
 @Data
-@EqualsAndHashCode(of = {"id"})
-@Builder
-@ToString(of = {"id", "name"})
-public class Film {
-    private long id;
+@EqualsAndHashCode(callSuper = true)
+@SuperBuilder
+@AllArgsConstructor
+@ToString(callSuper = true, of = {"name"})
+public class Film extends BaseEntity {
 
     @NotBlank(message = "Название не может быть пустым")
     private String name;

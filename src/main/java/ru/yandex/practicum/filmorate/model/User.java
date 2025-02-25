@@ -4,19 +4,17 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Pattern;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
 
 @Data
-@EqualsAndHashCode(of = {"id"})
-@ToString(of = {"id", "login"})
-@Builder
-public class User {
-    private long id;
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true, of = {"login"})
+@SuperBuilder
+@AllArgsConstructor
+public class User extends BaseEntity{
 
     @NotBlank(message = "Email не может быть пустым")
     @Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$", message = "Некорректный формат почты")

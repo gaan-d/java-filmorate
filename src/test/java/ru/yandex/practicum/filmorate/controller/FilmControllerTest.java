@@ -28,14 +28,14 @@ public class FilmControllerTest {
 
     @Test
     public void shouldPassValidation() {
-        controller.createFilm(Film.builder()
+        controller.create(Film.builder()
                 .name("name1")
                 .description("description1")
                 .duration(192)
                 .releaseDate(LocalDate.of(2021, 4, 5))
                 .build());
 
-        assertEquals(1, controller.getFilms().size());
+        assertEquals(1, controller.getAll().size());
     }
 
     @Test
@@ -92,8 +92,8 @@ public class FilmControllerTest {
                 .releaseDate(LocalDate.of(2500, 1, 1))
                 .build();
 
-        assertThrows(ConditionsNotMetException.class, () -> controller.createFilm(film1));
-        controller.createFilm(film2);
+        assertThrows(ConditionsNotMetException.class, () -> controller.create(film1));
+        controller.create(film2);
     }
 
     @Test
@@ -118,45 +118,45 @@ public class FilmControllerTest {
 
     @Test
     public void shouldUpdateFilm() {
-        controller.createFilm(Film.builder()
+        controller.create(Film.builder()
                 .name("name1")
                 .description("description1")
                 .duration(192)
                 .releaseDate(LocalDate.of(2021, 4, 5))
                 .build());
 
-        controller.updateFilm(Film.builder()
-                .id(1)
+        controller.update(Film.builder()
+                .id(1L)
                 .name("name2")
                 .description("description2")
                 .duration(50)
                 .releaseDate(LocalDate.of(2024, 3, 3))
                 .build());
 
-        assertEquals(1, controller.getFilms().size());
+        assertEquals(1, controller.getAll().size());
     }
 
     @Test
     public void shouldPassDescriptionValidationWith200Symbols() {
-        controller.createFilm(Film.builder()
+        controller.create(Film.builder()
                 .name("name1")
                 .description("description1")
                 .duration(192)
                 .releaseDate(LocalDate.of(2021, 4, 5))
                 .build());
 
-        assertEquals(1, controller.getFilms().size());
+        assertEquals(1, controller.getAll().size());
     }
 
     @Test
     public void shouldPassReleaseDateValidation() {
-        controller.createFilm(Film.builder()
+        controller.create(Film.builder()
                 .name("name1")
                 .description("description")
                 .duration(192)
                 .releaseDate(LocalDate.of(1895, 12, 28))
                 .build());
 
-        assertEquals(1, controller.getFilms().size());
+        assertEquals(1, controller.getAll().size());
     }
 }
