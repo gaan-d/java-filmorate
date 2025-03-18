@@ -22,23 +22,23 @@ public class UserService {
         this.userStorage = userStorage;
     }
 
-    public List<User> getAll(){
-        return  userStorage.getAll();
+    public List<User> getAll() {
+        return userStorage.getAll();
     }
 
-    public User getById(Long id){
+    public User getById(Long id) {
         return userStorage.getById(id);
     }
 
-    public User create(User user){
+    public User create(User user) {
         return userStorage.create(user);
     }
 
-    public User update(User user){
+    public User update(User user) {
         return userStorage.update(user);
     }
 
-    public void delete(Long id){
+    public void delete(Long id) {
         userStorage.delete(id);
     }
 

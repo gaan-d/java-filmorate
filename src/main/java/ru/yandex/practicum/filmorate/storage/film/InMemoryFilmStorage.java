@@ -6,7 +6,10 @@ import ru.yandex.practicum.filmorate.exception.ConditionsNotMetException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Component
 @Slf4j
@@ -49,7 +52,7 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public Film getById(Long id) {
-        if (!films.containsKey(id)){
+        if (!films.containsKey(id)) {
             throw new NotFoundException("Фильм с ID " + id + " не найден");
         }
         return films.get(id);

@@ -6,7 +6,10 @@ import ru.yandex.practicum.filmorate.exception.ConditionsNotMetException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Component
@@ -55,8 +58,8 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public User getById(Long id) {
-        if (!users.containsKey(id)){
-           throw new NotFoundException("Пользователь с id " + id + " не найден");
+        if (!users.containsKey(id)) {
+            throw new NotFoundException("Пользователь с id " + id + " не найден");
         }
         return users.get(id);
     }
