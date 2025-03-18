@@ -1,31 +1,72 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
-@Slf4j
+import java.util.List;
+
 @RestController
 @RequestMapping("/users")
-public class UserController extends BaseController<User> {
+@Slf4j
+@Validated
+public class UserController {
+    private final UserService service;
 
-    @Override
-    public User create(@Valid @RequestBody User user) {
-        if (user.getName() == null || user.getName().isBlank()) {
-            user.setName(user.getLogin());
-        }
-        return super.create(user);
+    @Autowired
+    public UserController(UserService service){
+        this.service = service;
     }
 
-    @Override
-    public User update(@Valid @RequestBody User user) {
-        if (user.getName() == null || user.getName().isBlank()) {
-            user.setName(user.getLogin());
-        }
-        return super.update(user);
+    @GetMapping
+    public List<User> getAll(){
+        return service.getAll();
+    }
+
+    @GetMapping("/{id}")
+    public User getById(@PathVariable Long id){
+        return service.getById(id);
+    }
+
+    @PostMapping
+    public User create(@Valid @RequestBody User user){
+        return service.create(user);
+    }
+
+    @PutMapping
+    public User update(@Valid @RequestBody User user){
+        return service.update(user);
+    }
+
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id){
+        service.delete(id);
+    }
+
+    @PutMapping("/{id}/friends/{friendId}")
+    public void addFriend(@PathVariable @Positive Long id, @PathVariable @Positive Long friendId){
+        service.addFriend(id, friendId);
+    }
+
+    @DeleteMapping("/{id}/friends/{friendId}")
+    public void deleteFriend(@PathVariable @Positive Long id, @PathVariable @Positive Long friendId){
+        service.removeFriend(id, friendId);
+    }
+
+    @GetMapping("/{id}/friends")
+    public List<User> getFriends(@PathVariable @Positive Long id){
+        return service.getFriends(id);
+    }
+
+    @GetMapping("/{id}/friends/common/{otherId}")
+    public List<User> getMutualFriends(@PathVariable @Positive Long id, @PathVariable @Positive Long otherId){
+        return service.getMutualFriends(id, otherId);
     }
 }
 

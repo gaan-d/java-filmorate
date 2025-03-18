@@ -1,38 +1,65 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import ru.yandex.practicum.filmorate.exception.ConditionsNotMetException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FilmService;
 
-import java.time.LocalDate;
+import java.util.List;
 
-@Slf4j
 @RestController
 @RequestMapping("/films")
-public class FilmController extends BaseController<Film> {
-    private static final LocalDate RELEASE_DATE_CHECK = LocalDate.of(1895, 12, 28);
+@Slf4j
+@Validated
+public class FilmController {
+    private final FilmService service;
 
-    @Override
+    @Autowired
+    public FilmController(FilmService service) {
+        this.service = service;
+    }
+
+    @GetMapping
+    public List<Film> getAll() {
+        return service.getAll();
+    }
+
+    @GetMapping("/{id}")
+    public Film getById(@PathVariable Long id) {
+        return service.getById(id);
+    }
+
+    @PostMapping
     public Film create(@Valid @RequestBody Film film) {
-        validateReleaseDate(film);
-        return super.create(film);
+        return service.create(film);
     }
 
-    @Override
+    @PutMapping
     public Film update(@Valid @RequestBody Film film) {
-        validateReleaseDate(film);
-        return super.update(film);
+        return service.update(film);
     }
 
-    private void validateReleaseDate(Film film) {
-        if (film.getReleaseDate().isBefore(RELEASE_DATE_CHECK)) {
-            String error = "Дата релиза не должна быть ранее 28.12.1895";
-            log.error("Ошибка при обновлении фильма: {}", error);
-            throw new ConditionsNotMetException(error);
-        }
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        service.delete(id);
+    }
+
+    @PutMapping("/{id}/like/{userId}")
+    public void addLike(@PathVariable @Positive Long id, @PathVariable @Positive Long userId) {
+        service.addLike(id, userId);
+    }
+
+    @DeleteMapping("/{id}/like/{userId}")
+    public void removeLike(@PathVariable @Positive Long id, @PathVariable @Positive Long userId) {
+        service.removeLike(id, userId);
+    }
+
+    @GetMapping("/popular")
+    public List<Film> getPopularFilms(@RequestParam(defaultValue = "10") @Positive int count) {
+        return service.getPopularFilms(count);
     }
 }
