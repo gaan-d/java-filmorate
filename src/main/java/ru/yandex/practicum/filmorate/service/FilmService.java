@@ -34,7 +34,7 @@ public class FilmService {
 
     public void addLike(@Positive Long filmId, @Positive Long userId) {
         Film film = getByIdOrThrow(filmId);
-        getByIdOrThrow(userId);
+        getUserByIdOrThrow(userId);
 
         if (!film.getLikes().contains(userId)) {
             film.getLikes().add(userId);
