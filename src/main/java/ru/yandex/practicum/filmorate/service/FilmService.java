@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import ru.yandex.practicum.filmorate.exception.ConditionsNotMetException;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
@@ -22,6 +24,7 @@ public class FilmService {
     private static final LocalDate RELEASE_DATE_CHECK = LocalDate.of(1895, 12, 28);
     private final FilmStorage filmStorage;
     private final UserStorage userStorage;
+    private long idCounter = 1;
 
     @Autowired
     public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
@@ -30,8 +33,8 @@ public class FilmService {
     }
 
     public void addLike(@Positive Long filmId, @Positive Long userId) {
-        Film film = filmStorage.getById(filmId);
-        userStorage.getById(userId);
+        Film film = getByIdOrThrow(filmId);
+        getByIdOrThrow(userId);
 
         if (!film.getLikes().contains(userId)) {
             film.getLikes().add(userId);
@@ -41,8 +44,8 @@ public class FilmService {
     }
 
     public void removeLike(@Positive Long filmId, @Positive Long userId) {
-        Film film = filmStorage.getById(filmId);
-        userStorage.getById(userId);
+        Film film = getByIdOrThrow(filmId);
+        getUserByIdOrThrow(userId);
 
         if (!film.getLikes().contains(userId)) {
             throw new ConditionsNotMetException("Пользователь с ID " + userId + " не ставил лайк этому фильму");
@@ -60,11 +63,18 @@ public class FilmService {
     }
 
     public Film create(Film film) {
+        film.setId(idCounter++);
         validateReleaseDate(film);
         return filmStorage.create(film);
     }
 
     public Film update(Film film) {
+        long id = film.getId();
+        if (id == 0) {
+            log.error("Ошибка при обновлении: Id не может быть равен 0.");
+            throw new ConditionsNotMetException("Id не может быть равен 0.");
+        }
+        getByIdOrThrow(id);
         validateReleaseDate(film);
         return filmStorage.update(film);
     }
@@ -78,6 +88,7 @@ public class FilmService {
     }
 
     public void delete(Long id) {
+        getByIdOrThrow(id);
         filmStorage.delete(id);
     }
 
@@ -87,5 +98,23 @@ public class FilmService {
             log.error("Ошибка при обновлении фильма: {}", error);
             throw new ConditionsNotMetException(error);
         }
+    }
+
+    public Film getByIdOrThrow(Long id) {
+        Film film = filmStorage.getById(id);
+        if (film == null) {
+            log.error("Ошибка: фильм с id {} не найден", id);
+            throw new NotFoundException("Фильм с id " + id + " не найден");
+        }
+        return film;
+    }
+
+    public User getUserByIdOrThrow(Long id) {
+        User user = userStorage.getById(id);
+        if (user == null) {
+            log.error("Ошибка: пользователь с id {} не найден", id);
+            throw new NotFoundException("Пользователь с id " + id + " не найден");
+        }
+        return user;
     }
 }

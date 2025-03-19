@@ -30,7 +30,7 @@ public class FilmController {
 
     @GetMapping("/{id}")
     public Film getById(@PathVariable Long id) {
-        return service.getById(id);
+        return service.getByIdOrThrow(id);
     }
 
     @PostMapping
