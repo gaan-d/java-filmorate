@@ -7,6 +7,9 @@ import jakarta.validation.ValidatorFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.time.LocalDate;
 import java.util.Set;
@@ -17,10 +20,15 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 public class UserControllerTest {
     private UserController controller;
     private Validator validator;
+    private UserStorage userStorage;
+    private UserService service;
 
     @BeforeEach
     public void setUp() {
-        controller = new UserController();
+        userStorage = new InMemoryUserStorage();
+
+        service = new UserService(userStorage);
+        controller = new UserController(service);
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         validator = factory.getValidator();
     }
