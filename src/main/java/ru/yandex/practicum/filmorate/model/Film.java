@@ -1,18 +1,18 @@
 package ru.yandex.practicum.filmorate.model;
 
 import jakarta.validation.constraints.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
 @SuperBuilder
 @AllArgsConstructor
+@NoArgsConstructor
 @ToString(callSuper = true, of = {"name"})
 public class Film extends BaseEntity {
 
@@ -29,4 +29,7 @@ public class Film extends BaseEntity {
 
     @Min(1)
     private int duration;
+
+    @Builder.Default
+    private Set<Long> likes = new HashSet<>();
 }
