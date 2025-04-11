@@ -1,3 +1,5 @@
+![scheme](https://github.com/user-attachments/assets/f883279b-2746-404b-a863-0900ca01ae47)
+
 # java-filmorate
 Template repository for Filmorate project.
 
