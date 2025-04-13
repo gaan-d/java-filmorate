@@ -1,4 +1,4 @@
-![scheme](https://github.com/user-attachments/assets/f883279b-2746-404b-a863-0900ca01ae47)
+[![scheme](https://github.com/gaan-d/java-filmorate/blob/add-database/scheme.png)
 
 # java-filmorate
 Template repository for Filmorate project.
