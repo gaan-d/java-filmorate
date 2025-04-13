@@ -1,4 +1,4 @@
-![scheme](https://github.com/gaan-d/java-filmorate/blob/add-database/scheme.png)
+![Схема базы данных](https://github.com/gaan-d/java-filmorate/blob/add-database/scheme.png)
 
 # java-filmorate
 Template repository for Filmorate project.
