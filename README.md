@@ -119,8 +119,6 @@ SELECT * FROM "user";
 
 ### Топ N наиболее популярных фильмов
 
-> Предполагается наличие таблицы `film_like`, где фиксируются лайки от пользователей.
-
 ```sql
 SELECT 
   f.*, 
@@ -139,8 +137,8 @@ LIMIT N;
 ```sql
 SELECT u.*
 FROM "user" u
-JOIN friendship f1 ON f1.friend_id = u.user_id AND f1.is_confirmed = true
-JOIN friendship f2 ON f2.friend_id = u.user_id AND f2.is_confirmed = true
+JOIN friendship f1 ON f1.friend_id = u.id AND f1.is_confirmed = true
+JOIN friendship f2 ON f2.friend_id = u.id AND f2.is_confirmed = true
 WHERE f1.user_id = :user1_id
   AND f2.user_id = :user2_id;
 ```
