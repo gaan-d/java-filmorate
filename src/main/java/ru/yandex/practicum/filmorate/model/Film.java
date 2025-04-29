@@ -5,11 +5,13 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Data
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(of = {"id"})
 @SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -32,4 +34,10 @@ public class Film extends BaseEntity {
 
     @Builder.Default
     private Set<Long> likes = new HashSet<>();
+
+    @NotNull(message = "У фильма должен быть рейтинг MPA")
+    RatingMpa mpa;
+
+    @Builder.Default
+    List<Genre> genres = new ArrayList<>();
 }

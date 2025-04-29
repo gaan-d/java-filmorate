@@ -1,32 +1,31 @@
 package ru.yandex.practicum.filmorate.service;
 
 import jakarta.validation.constraints.Positive;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
+import ru.yandex.practicum.filmorate.dal.storage.user.UserStorage;
 import ru.yandex.practicum.filmorate.exception.ConditionsNotMetException;
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
+import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 @Service
 @Slf4j
 @Validated
+@RequiredArgsConstructor
 public class UserService {
     private final UserStorage userStorage;
-    private long idCounter = 1;
 
-    @Autowired
-    public UserService(UserStorage userStorage) {
-        this.userStorage = userStorage;
+    public Map<Long, User> getAll() {
+        return userStorage.getAll();
     }
 
-    public List<User> getAll() {
-        return userStorage.getAll();
+    public Collection<User> getAllValues() {
+        return userStorage.getAllValues();
     }
 
     public User getById(Long id) {
@@ -34,7 +33,6 @@ public class UserService {
     }
 
     public User create(User user) {
-        user.setId(idCounter++);
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
         }
@@ -42,72 +40,32 @@ public class UserService {
     }
 
     public User update(User user) {
-        long id = user.getId();
-        if (id == 0) {
+        if (user.getId() == 0) {
             log.error("Ошибка при обновлении: Id не может быть равен 0.");
             throw new ConditionsNotMetException("Id не может быть равен 0.");
         }
-        getByIdOrThrow(id);
         return userStorage.update(user);
     }
 
     public void delete(Long id) {
-        getByIdOrThrow(id);
-        userStorage.delete(id);
+        userStorage.deleteById(id);
     }
 
     public void addFriend(@Positive Long userId, @Positive Long friendId) {
-        User user = getByIdOrThrow(userId);
-        User friend = getByIdOrThrow(friendId);
-
-        user.getFriends().add(friendId);
-        friend.getFriends().add(userId);
-
-        userStorage.update(user);
-        userStorage.update(friend);
+        userStorage.addFriend(userId, friendId);
         log.info("Пользователь {} добавил в друзья пользователя {}", userId, friendId);
     }
 
     public void removeFriend(@Positive Long userId, @Positive Long friendId) {
-        User user = getByIdOrThrow(userId);
-        User friend = getByIdOrThrow(friendId);
-
-        user.getFriends().remove(friendId);
-        friend.getFriends().remove(userId);
-
-        userStorage.update(user);
-        userStorage.update(friend);
-
-        log.info("Пользователь {} удалил из друзей пользователя {}", user.getName(), friend.getName());
+        userStorage.removeFriend(userId, friendId);
+        log.info("Пользователь с id {} удалил из друзей пользователя с id {}", userId, friendId);
     }
 
     public List<User> getFriends(@Positive Long userId) {
-        User user = getByIdOrThrow(userId);
-        return user.getFriends()
-                .stream()
-                .map(userStorage::getById)
-                .collect(Collectors.toList());
+        return userStorage.getAllFriends(userId);
     }
 
     public List<User> getMutualFriends(@Positive Long userId, @Positive Long friendId) {
-        User user = getByIdOrThrow(userId);
-        User friend = getByIdOrThrow(friendId);
-
-        List<User> mutualFriends = user.getFriends()
-                .stream()
-                .filter(friend.getFriends()::contains)
-                .map(userStorage::getById)
-                .collect(Collectors.toList());
-        log.info("Общие друзья пользователей {} и {}: {}", userId, friendId, mutualFriends);
-        return mutualFriends;
-    }
-
-    public User getByIdOrThrow(Long id) {
-        User user = userStorage.getById(id);
-        if (user == null) {
-            log.error("Ошибка: пользователь с id {} не найден", id);
-            throw new NotFoundException("Пользователь с id " + id + " не найден");
-        }
-        return user;
+        return userStorage.getMutualFriends(userId, friendId);
     }
 }

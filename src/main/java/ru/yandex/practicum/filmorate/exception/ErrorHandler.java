@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.exception;
 
 import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -19,16 +20,16 @@ public class ErrorHandler {
         return new ErrorResponse("Ошибка валидации", e.getMessage());
     }
 
-    @ExceptionHandler
+    @ExceptionHandler({NotFoundException.class, EmptyResultDataAccessException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleNotFoundException(NotFoundException e) {
+    public ErrorResponse handleNotFoundException(Exception e) {
         log.error("Объект не найден: {}", e.getMessage(), e);
         return new ErrorResponse("Объект не найден", e.getMessage());
     }
 
-    @ExceptionHandler
+    @ExceptionHandler(InternalServerException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse handleThrowable(Throwable e) {
+    public ErrorResponse handleThrowable(InternalServerException e) {
         log.error("Внутренняя ошибка сервера: {}", e.getMessage(), e);
         return new ErrorResponse("Внутренняя ошибка сервера", e.getMessage());
     }
