@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.dal.storage.film;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.springframework.context.annotation.Primary;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -20,6 +21,8 @@ import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.RatingMpa;
 
 import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -159,13 +162,23 @@ public class FilmRepository extends BaseRepository<Film> implements FilmStorage 
     }
 
     private boolean addFilmGenres(Long filmId, List<Genre> genres) {
-        for (Genre genre : genres) {
-            genreRepository.getGenreById(genre.getId());
-            String query = "MERGE INTO film_genre " +
+        String query = "MERGE INTO film_genre " +
                     "KEY (film_id, genre_id) " +
                     "VALUES (?, ?)";
-            jdbc.update(query, filmId, genre.getId());
-        }
+        jdbc.batchUpdate(query, new BatchPreparedStatementSetter() {
+            @Override
+            public void setValues(PreparedStatement ps, int i) throws SQLException {
+                Genre genre = genres.get(i);
+                genreRepository.getGenreById(genre.getId());
+                ps.setLong(1, filmId);
+                ps.setLong(2, genre.getId());
+            }
+
+            @Override
+            public int getBatchSize() {
+                return genres.size();
+            }
+        });
         return true;
     }
 
